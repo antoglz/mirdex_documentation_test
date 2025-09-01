@@ -2,7 +2,7 @@
 layout: page
 title: Citations
 icon: fas fa-tags
-order: 7
+order: 1
 toc: true
 ---
 
@@ -21,7 +21,6 @@ toc: true
 
 ### [Python](https://www.python.org/)
 > Python Software Foundation. Python Language Reference, version 3.8.
-
 
 ## Pipeline tools
 
@@ -52,7 +51,6 @@ toc: true
 ### [DESeq2](https://pubmed.ncbi.nlm.nih.gov/25516281/)
 > Love MI, Huber W, Anders S. (2014). Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. Genome Biol, 15(12), 550. PubMed PMID: 25516281; PubMed Central PMCID: PMC4302049.
 
-
 ### [tidyverse](https://joss.theoj.org/papers/10.21105/joss.01686)
 > Wickham H, Averick M, Bryan J, Chang W, McGowan L, François R, et al. (2019). Welcome to the tidyverse. J Open Source Softw, 4(43), 1686.
 
@@ -62,13 +60,11 @@ toc: true
 ### [plotly](https://cran.r-project.org/web/packages/plotly/index.html)
 > Sievert C (2020). Interactive Web-Based Data Visualization with R, plotly, and shiny. Chapman and Hall/CRC, Florida. R package version 4.10.4, <https://CRAN.R-project.org/package=plotly>.
 
-
 ### [SARTools](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0157022)
 > Varet, H., Brillet-Guéguen, L., Coppée, J. Y., & Dillies, M. A. (2016). SARTools: A DESeq2- and EdgeR-Based R Pipeline for Comprehensive Differential Analysis of RNA-Seq Data. PLoS One, 11(6), e0157022. https://doi.org/10.1371/journal.pone.0157022
 
 ### [DEGreport](https://www.bioconductor.org/packages/release/bioc/html/DEGreport.html)
 > Pantano L (2025). DEGreport: Report of DEG analysis. doi:10.18129/B9.bioc.DEGreport, R package version 1.44.0, <https://bioconductor.org/packages/DEGreport>.
-
 
 ## Software packaging / containerisation
 
