@@ -6,8 +6,6 @@ order: 1
 toc: true
 ---
 
-# CITATIONS
-
 ## Core software
 
 ### [Nextflow](https://pubmed.ncbi.nlm.nih.gov/28398311/)
