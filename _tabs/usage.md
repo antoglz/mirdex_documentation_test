@@ -1,7 +1,9 @@
 ---
-layout: Usage
+layout: page
+title: Usage
 icon: fas fa-tags
 order: 2
+toc: true
 ---
 
 # Usage

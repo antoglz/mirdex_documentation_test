@@ -1,7 +1,9 @@
 ---
-layout: Differential Expression Analysis
+layout: page
+title: Differential Expression Analysis
 icon: fas fa-tags
 order: 4
+toc: true
 ---
 
 ## Configuring Differential Expression Analysis

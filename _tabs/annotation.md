@@ -1,7 +1,9 @@
 ---
-layout: Annotation
+layout: page
+title: Annotation
 icon: fas fa-tags
 order: 5
+toc: true
 ---
 
 # miRNA Annotation Workflow

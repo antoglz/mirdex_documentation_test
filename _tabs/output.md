@@ -1,7 +1,9 @@
 ---
-layout: Output
+layout: page
+title: Output
 icon: fas fa-tags
 order: 6
+toc: true
 ---
 
 # Pipeline Workflow Overview

@@ -1,7 +1,9 @@
 ---
-layout: Parameters
+layout: page
+title: Parameters
 icon: fas fa-tags
 order: 3
+toc: true
 ---
 
 <!-- Style -->

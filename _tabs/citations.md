@@ -1,7 +1,9 @@
 ---
-layout: Citations
+layout: page
+title: Citations
 icon: fas fa-tags
 order: 7
+toc: true
 ---
 
 # CITATIONS
