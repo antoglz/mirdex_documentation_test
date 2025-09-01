@@ -88,7 +88,7 @@ In this example, each row represents a single-end FASTQ file associated with a s
 
 The pipeline can be executed as follows, specifying the input samplesheet, the output directory, and the execution environment (Docker, Singularity, or Conda):
 
-```
+```bash
 nextflow run miRdeX-nf/main.nf
    --input <SAMPLESHEET>
    --outdir <OUTDIR>
@@ -100,11 +100,16 @@ For full details on all pipeline features, supported input types, and configurab
 > [!Note]
 > Make sure to select an execution profile compatible with your system (`docker`, `singularity`, or `conda`). The profile determines how dependencies and containers are managed during workflow execution.
 
+<div class="notice--info">
+<strong>Note:</strong> Make sure to select an execution profile compatible with your system
+(<code>docker</code>, <code>singularity</code>, or <code>conda</code>).
+</div>
+
 ## Pipeline output
 
 The pipeline produces a structured set of results, including processed libraries, quality control reports, quantification tables, differential expression results, and miRNA/isomiR annotations:
 
-```
+```text
 outdir/
 ├── 00-Data_download                  # Raw FASTQ files downloaded from SRA or provided locally
 ├── 01-Trimming                       # Adapter- and quality-trimmed reads after preprocessing
