@@ -8,10 +8,6 @@ toc: true
 
 **mirDeX-nf** is a Nextflow-based pipeline for differential expression analysis of microRNAs (miRNAs) from small RNA sequencing (sRNA-seq) data. One of the key features of mirDeX-nf is its ability to process and analyze data from multiple comparisons, projects, or species simultaneously. Users only need to include the data for the projects they wish to analyze, and the pipeline will return results for all of them in a single run.
 
-![mirdex-nf metro map](mirdex_metromap.svg)
-
-> This metro map was inspired by the workflow representation style used in the [nf-core/rnaseq](https://github.com/nf-core/rnaseq/tree/master) documentation. In case the image above is not loading, please have a look at the [static version](/Users/antoniogonzalezsanchez/Desktop/Docs_mirdex/metromap/mirdex_metromap_static.svg).
-
 1. SRA download (`prefetch` and `fasterq-dump`)
 2. Support for direct input: FASTQ or precomputed count matrices
 3. Read preprocessing (FASTQ):
@@ -68,7 +64,7 @@ cd mirDeX-nf
 
 ## Usage
 
-To run **miRdeX-nf**, you must provide a properly formatted samplesheet specifying the inputs and metadata for each analysis. The pipeline supports multiple input types, including FASTQ files, SRA accession lists, and raw count matrices. Only the FASTQ input format is shown below; for full details on all supported input types, see the [usage documentation](docs/USAGE.md).
+To run **miRdeX-nf**, you must provide a properly formatted samplesheet specifying the inputs and metadata for each analysis. The pipeline supports multiple input types, including FASTQ files, SRA accession lists, and raw count matrices. Only the FASTQ input format is shown below; for full details on all supported input types, see the usage documentation.
 
 **samplesheet.tsv**:
 
@@ -99,7 +95,7 @@ nextflow run miRdeX-nf/main.nf
    -profile <docker/singularity/.../>
 ```
 
-For full details on all pipeline features, supported input types, and configurable parameters, it is strongly recommended to consult the [usage documentation](docs/USAGE.md) and the [parameter documentation](docs/PARAMETERS.md) before running the workflow.
+For full details on all pipeline features, supported input types, and configurable parameters, it is strongly recommended to consult the usage documentation and the parameter documentation before running the workflow.
 
 > [!Note]
 > Make sure to select an execution profile compatible with your system (`docker`, `singularity`, or `conda`). The profile determines how dependencies and containers are managed during workflow execution.
@@ -138,4 +134,4 @@ outdir/
 └── 09-Workflow_report                # Workflow execution reports, logs, and consolidated summaries
 ```
 
-For a **comprehensive description of the generated outputs and accompanying reports**, please refer to the [output documentation](docs/output.md).
+For a **comprehensive description of the generated outputs and accompanying reports**, please refer to the output documentation.
