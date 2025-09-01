@@ -50,6 +50,9 @@ defaults:
       layout: page
       permalink: /:title/
 
+kramdown:
+  parse_block_html: true
+
 exclude:
   - "*.gem"
   - "*.gemspec"
