@@ -642,4 +642,4 @@ outdir/
 File description:
 - **Mean–variance plot** — Before performing Principal Component Analysis (PCA), the pipeline automatically computes the relationship between mean abundance and variance across features, both on raw counts and on counts transformed using the **Variance Stabilizing Transformation (VST)**. This transformation, applied exclusively for exploratory purposes, stabilises variance across the dynamic range of counts, preventing highly abundant sequences from dominating the analysis. The VST-transformed data are then used as input for PCA.
 
-[](/assets/img/mean_vs_var.png){: width="700" height="400" }
+![]({{ site.baseurl }}/assets/img/mean_vs_var.png){: width="700" height="400" }
