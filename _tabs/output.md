@@ -7,8 +7,7 @@ toc: true
 ---
 
 <nav>
-  <h2>Pipeline Workflow Overview</h4>
-  * this unordered seed list will be replaced by toc as unordered list
+  <h2>Pipeline Workflow Overview</h2>
   {:toc}
 </nav>
 
