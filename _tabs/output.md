@@ -657,11 +657,11 @@ File description:
   Three PCA outputs are generated:
   - `*.ea.html` — An interactive 3D **PCA plot** (Plotly) for dynamic inspection.
   
-  ![pca](assets/img/pca.png){: width="700" height="400" }
+  ![pca](assets/img/pca.png)
 
   - `*variance.ea.png` — A **variance bar plot** showing the percentage of total variance explained by each component.
   
-  ![pca variance](assets/img/pca_variance.png){: width="700" height="400" }
+  ![pca variance](assets/img/pca_variance.png)
   
   - `*.ea_summary.tsv` — **Summary** statistics from the EA stage, including proportion of variance explained by the top principal components and the p-value from the Mann–Whitney–Wilcoxon test (Clustering test). Example:
 
