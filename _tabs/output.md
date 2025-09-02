@@ -118,3 +118,334 @@ TGAAGCTGCCAGCATGATCTA
 IIIIIIIIIIIIIIIIIIII
 ...
 ```
+
+
+## Quality Control (QC)
+
+The **quality control (QC)** stage evaluates sequencing read quality both before and after trimming. QC is performed with FastQC for per-library assessments and MultiQC for aggregated project-level summaries.
+
+### FastQC
+The quality assessment of **individual libraries** is performed using [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/). FastQC runs a series of diagnostic checks on raw and trimmed reads, including per-base sequence quality, GC content, sequence length distribution, overrepresented sequences, and adapter contamination. Running FastQC on both pre- and post-trimmed datasets allows direct comparison to verify sequencing quality and to assess the effectiveness of the trimming process.
+
+##### Output files
+This step produces one HTML report and one compressed archive per library, both containing the results of all FastQC quality metrics.
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+│    ├── 01-FastQC/<SPECIES>/<PROJECT>/
+│    │    ├── *.fastqc.html
+│    │    └── *.fastqc.zip
+│    └── 02-MultiQC
+├── 03-Validation
+├── 04-Filtering
+├── 05-Quantification
+├── 06-DEA
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+
+- `*.fastqc.html` — Interactive HTML report containing plots and tables for all FastQC quality checks, viewable in any web browser.
+- `*.fastqc.zip` — Compressed directory containing the raw data and images from the FastQC analysis, including the fastqc_data.txt file with all numerical metrics.
+
+### MultiQC
+
+[MultiQC](https://multiqc.info/) compiles all individual FastQC reports into a single aggregated HTML report. This global summary provides an at-a-glance overview of sequencing quality across all libraries, enabling rapid detection of systematic issues, batch effects, or quality trends that might affect downstream analyses.
+
+##### Output files
+
+MultiQC generates one interactive HTML report at the **project level**.
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+│    ├── 01-FastQC
+│    └── 02-MultiQC/<SPECIES>/<PROJECT>/
+│         └── *_report.html
+├── 03-Validation
+├── 04-Filtering
+├── 05-Quantification
+├── 06-DEA
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+
+- `*_report.html` — Aggregated, interactive HTML report combining all individual FastQC outputs. Includes side-by-side comparisons of quality metrics, summary tables, and plots across all libraries in the project.
+
+## Validation
+
+The **validation** stage verifies that datasets meet minimum quality and replication standards before proceeding to Differential Expression Analysis (DEA). This step ensures that downstream statistical analyses are based on sufficiently deep and adequately replicated datasets. Two distinct validation modes are implemented depending on the input type: **Libraries validation** and **Count matrix validation**. In both modes, validation operates at the analysis group level, ensuring that all sample groups to be compared in DEA satisfy the thresholds specified by the user.
+
+### Libraries validation (*Option 1*)
+
+The **libraries validation** step evaluates the suitability of both individual libraries and their corresponding analysis groups for inclusion in downstream analyses. Two independent criteria are applied: the **sequencing depth** of each library and the **minimum number of biological replicates** per sample group within an analysis group. These thresholds are defined by the user via the `--validation_depth` and `--validation_rep` parameters, respectively.
+
+Validation ensures that only analysis groups meeting both criteria — sufficient sequencing depth in all relevant libraries and adequate replication in all compared sample groups — are carried forward into DEA.
+
+##### Output files
+This step produces two tab-delimited reports — one detailing library-level validation (depth and replicates) and another summarising analysis group validity based on these criteria. Libraries or groups failing validation are excluded from subsequent steps.
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+├── 03-Validation/<SPECIES>/<PROJECT>/
+│    ├── *sum_libraries.tsv
+│    └── *sum_project.tsv
+├── 04-Filtering
+├── 05-Quantification
+├── 06-DEA
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+
+- `*sum_libraries.tsv` — Lists each processed library with its validation status. Columns:
+  - `File` — Library identifier (matches the Run column in the metadata).
+  - `Depth` — Total number of reads in the library.
+  - `Depth_validity` — `valid` if the library meets the minimum depth threshold, `not-valid` otherwise.
+  - `Replicates_validity` — `valid` if the library belongs to a sample group with at least the required number of biological replicates, and the other group in the planned DEA comparison also meets this requirement; `not-valid` otherwise.
+
+```plaintext
+File	Depth	Depth_validity	Replicates_validity
+SRR14182731.fastp.fastq.gz	19042524	valid	valid
+SRR14182732.fastp.fastq.gz	12561071	valid	valid
+SRR14182733.fastp.fastq.gz	18047262	valid	valid
+SRR14182734.fastp.fastq.gz	14794553	valid	valid
+SRR14182735.fastp.fastq.gz	16977623	valid	valid
+SRR14182736.fastp.fastq.gz	18485787	valid	valid
+SRR14182738.fastp.fastq.gz	17822264	valid	valid
+SRR14182739.fastp.fastq.gz	12127819	valid	valid
+SRR14182740.fastp.fastq.gz	11545483	valid	valid
+SRR14182741.fastp.fastq.gz	6659745	valid	valid
+SRR14182742.fastp.fastq.gz	8379530	valid	valid
+SRR14182743.fastp.fastq.gz	16865976	valid	valid
+SRR14182747.fastp.fastq.gz	16022716	valid	valid
+SRR14182749.fastp.fastq.gz	17600922	valid	valid
+SRR14182750.fastp.fastq.gz	15849560	valid	valid
+```
+
+- `*sum_project.tsv` — Aggregates validation results across libraries within each analysis group. Columns:
+  - `Project` — Project identifier (Project column in the metadata).
+  - `Group_id` — Analysis group identifier (Group column in the metadata).
+  - `Number_valid_files` — Number of libraries passing both depth and replicate requirements.
+  - `Number_not_valid_files` — Number of libraries failing one or both requirements.
+  - `Group_validity` — `valid` if the analysis group contains at least two sample groups meeting the minimum replicate threshold and sequencing depth requirement; `not-valid` otherwise.
+
+```plaintext
+Project	Group_id	Number_valid_files	Number_not_valid_files	Group_validity
+PROJECT1	1	2	4	not-valid
+PROJECT1	2	0	6	not-valid
+PROJECT1	3	1	5	not-valid
+PROJECT1	4	0	6	not-valid
+PROJECT1	5	3	3	not-valid
+PROJECT1	6	6	0	valid
+PROJECT1	7	6	0	valid
+PROJECT1	8	6	0	valid
+PROJECT1	9	6	0	valid
+```
+
+### Count matrix validation (*Option 2*)
+
+The **count matrix validation** step is applied when the input provided in the samplesheet is a pre-computed count matrix for a specific analysis group (`--from_counts`) rather than raw sequencing libraries. In this scenario, sequencing depth is not applicable, and validation instead considers two main aspects. First, the **structural integrity** of the matrix is checked to ensure that the file follows the expected format, including correct column names and appropriate data types. Second, the **number of biological replicates** in each sample group intended for DEA is verified against the user-defined threshold (`--validation_rep`). An analysis group passes validation only if the matrix structure is correct and all sample groups satisfy the replicate requirement, and any group failing either criterion is excluded from DEA.
+
+
+##### Output files
+This step produces two tab-delimited reports — one detailing library-level validation (depth and replicates) and another summarising analysis group validity based on these criteria. Libraries or groups failing validation are excluded from subsequent steps.
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+├── 03-Validation/<SPECIES>/<PROJECT>/
+│    └── *sum.tsv
+├── 04-Filtering
+├── 05-Quantification
+├── 06-DEA
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+
+- `*sum.tsv` — Aggregates validation results across libraries within each analysis group. Columns:
+  - `Group` — Full analysis group identifier formed by concatenating the project identifier and the group_id.
+  - `Project` — Project identifier (`Project` column in the metadata).
+  - `Group_id` — Analysis group identifier (`Group` column in the metadata).
+  - `Group_validity` — Indicates whether the group meets the validation criteria (`valid`) or fails (`not-valid`)
+  - `Exclusion_reason` — Specifies the reason why a group is marked as `not-valid` (`NA` if the group is `valid`)
+  - `Number_valid_samples` — Number of samples passing both depth and replicate requirements.
+  - `Number_not_valid_samples` — Number of samples failing one or both requirements.
+
+```
+Group	Project	Group_id	Group_validity	Exclusion_reason	Number_valid_samples	Number_not_valid_samples
+PROJECT1_1	PROJECT1	1	not-valid	replicates	2	4
+```
+
+## Filtering
+
+The **filtering** stage aims to remove undesired sequences and retain only those relevant for downstream analysis, using [Bowtie](https://bowtie-bio.sourceforge.net/manual.shtml) — an ultrafast, memory-efficient short-read aligner that leverages the Burrows–Wheeler index to minimise memory usage while maintaining high mapping speed. In mirDeX-nf, Bowtie runs in single-end mode and supports full multi-threading, enabling the rapid alignment of millions of small RNA reads. This step can be applied in two modes: **Database** and **Genome** filtering.
+
+Both modes produce, for each library, an alignment summary file along with compressed FASTQ files containing reads classified as either aligned (retained or discarded, depending on the mode) or unaligned. Additional Bowtie parameters can be passed using `--bowtie_filt_db_ext_args` or `--bowtie_filt_genome_ext_args`.
+
+
+### Database Filtering
+
+In this mode, reads are aligned against a user-defined reference sequence **database** specified with `--filt_db /path/to/database.fasta`. The database typically contains unwanted sequences such as rRNA, tRNA, snRNA, snoRNA, etc. Reads mapping to this database are discarded, and only the unaligned reads are passed to downstream analysis. Additional alignment parameters for Bowtie can be provided via `--bowtie_filt_db_ext_args`.
+
+##### Output files
+
+This *optional* step generates, for each library, an alignment report and two FASTQ files containing reads classified as **aligned** (discarded) or **unaligned** (retained for further analysis).
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+├── 03-Validation
+├── 04-Filtering
+│    ├── 01-Database_filtering/<SPECIES>/<PROJECT>/
+│    │    ├── 01-Alignment_out/
+│    │    │    └── *.out
+│    │    └── 02-Libraries/
+│    │         ├── *.database.aligned.fastq.gz
+│    │         └── *.database.unaligned.fastq.gz
+│    └── 02-Genome_filtering/
+├── 05-Quantification
+├── 06-DEA
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+
+- `01-Alignment_out/*.out` — Alignment summary generated by Bowtie for each library, reporting total reads processed, number and percentage of reads aligned, and other alignment statistics.
+
+```plaintext
+## reads processed: 8754320
+## reads with at least one alignment: 201614 (2.30%)
+## reads that failed to align: 8552706 (97.70%)
+Reported 201614 alignments
+```
+
+- `02-Libraries/*.database.aligned.fastq.gz` — Compressed FASTQ file containing reads that aligned to the filtering database (discarded in downstream analysis).
+
+```plaintext
+@SEQ_ID_1
+TGACAGAAGAGAGTGAGCAC
++
+IIIIIIIIIIIIIIIIIIII
+@SEQ_ID_2
+TGAAGCTGCCAGCATGATCTA
++
+IIIIIIIIIIIIIIIIIIII
+...
+```
+
+- `02-Libraries/*.database.unaligned.fastq.gz` — Compressed FASTQ file containing reads that did not align to the database (retained for downstream analysis).
+
+```plaintext
+@SEQ_ID_3
+TTGACAGAAGATAGAGAGCAC
++
+IIIIIIIIIIIIIIIIIIII
+@SEQ_ID_4
+TGACAGAAGAGAGTGAGCAC
++
+IIIIIIIIIIIIIIIIIIII
+...
+```
+
+### Genome Filtering
+
+In this mode, reads are aligned to the reference **genome** specified in the Genome column of the samplesheet when `--filt_genome` is enabled. Reads mapping to the genome are retained, while unaligned reads are discarded, ensuring that only sequences originating from the target species proceed to downstream steps. Additional Bowtie parameters can be provided via `--bowtie_filt_genome_ext_args`.
+
+##### Output files
+This *optional* step produces an alignment summary and two FASTQ files per library, containing reads classified as **aligned** (retained) or **unaligned** (discarded).
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+├── 03-Validation
+├── 04-Filtering
+│    ├── 01-Database_filtering
+│    └── 02-Genome_filtering/<SPECIES>/<PROJECT>/
+│         ├── 01-Alignment_out/
+│         │    └── *.out
+│         └── 02-Libraries/
+│              ├── *.genome.aligned.fastq.gz
+│              └── *.genome.unaligned.fastq.gz
+├── 05-Quantification
+├── 06-DEA
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+
+- `01-Alignment_out/*.out` — Alignment summary from Bowtie for each library, detailing processed reads, number and percentage aligned, and additional statistics.
+
+```plaintext
+## reads processed: 8754320
+## reads with at least one alignment: 201614 (2.30%)
+## reads that failed to align: 8552706 (97.70%)
+Reported 201614 alignments
+```
+
+- `02-Libraries/*.genome.aligned.fastq.gz` — Compressed FASTQ file containing reads that aligned to the genome (retained in downstream analysis).
+
+
+```plaintext
+@SEQ_ID_4
+TGACAGAAGAGAGTGAGCAC
++
+IIIIIIIIIIIIIIIIIIII
+@SEQ_ID_5
+TTGACAGATTATAGAGAGCAC
++
+IIIIIIIIIIIIIIIIIIII
+...
+```
+
+- `02-Libraries/*.genome.unaligned.fastq.gz` — Compressed FASTQ file containing reads that did not align to the genome (discarded in downstream analysis).
+
+```plaintext
+@SEQ_ID_3
+TTGACAGAAGATAGAGAGCAC
++
+IIIIIIIIIIIIIIIIIIII
+@SEQ_ID_7
+TGACAGTTGAGAGTGAGCAC
++
+IIIIIIIIIIIIIIIIIIII
+...
+```
