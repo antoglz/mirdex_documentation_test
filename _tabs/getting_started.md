@@ -89,10 +89,10 @@ In this example, each row represents a single-end FASTQ file associated with a s
 The pipeline can be executed as follows, specifying the input samplesheet, the output directory, and the execution environment (Docker, Singularity, or Conda):
 
 ```bash
-nextflow run miRdeX-nf/main.nf
-   --input <SAMPLESHEET>
-   --outdir <OUTDIR>
-   -profile <docker/singularity/.../>
+    nextflow run miRdeX-nf/main.nf
+       --input <SAMPLESHEET>
+       --outdir <OUTDIR>
+       -profile <docker/singularity/.../>
 ```
 
 For full details on all pipeline features, supported input types, and configurable parameters, it is strongly recommended to consult the usage documentation and the parameter documentation before running the workflow.
