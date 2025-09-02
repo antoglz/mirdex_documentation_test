@@ -68,7 +68,7 @@ To run **miRdeX-nf**, you must provide a properly formatted samplesheet specifyi
 
 **samplesheet.tsv**:
 
-```plaintext
+```tsv
 Id       File                    Metadata                   Genome             Group
 sample1  data/sample1.fastq.gz   metadata/PROJECT1_meta.tsv genomes/ath.fa    
 sample2  data/sample2.fastq.gz   metadata/PROJECT1_meta.tsv genomes/ath.fa    
@@ -104,7 +104,7 @@ For full details on all pipeline features, supported input types, and configurab
 
 The pipeline produces a structured set of results, including processed libraries, quality control reports, quantification tables, differential expression results, and miRNA/isomiR annotations:
 
-```shell
+```plaintext
 outdir/
 ├── 00-Data_download                  # Raw FASTQ files downloaded from SRA or provided locally
 ├── 01-Trimming                       # Adapter- and quality-trimmed reads after preprocessing
