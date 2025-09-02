@@ -57,7 +57,7 @@ In addition, you must have at least one supported execution environment installe
 
 After installing the prerequisites, the pipeline can be obtained directly from GitHub. You can either **download a release archive** or **clone the repository** to get all workflow scripts and configuration files required to run **miRdeX-nf**:
 
-```sheññ
+```shell
 git clone https://github.com/<username>/mirDeX-nf.git
 cd mirDeX-nf
 ```
@@ -104,7 +104,7 @@ For full details on all pipeline features, supported input types, and configurab
 
 The pipeline produces a structured set of results, including processed libraries, quality control reports, quantification tables, differential expression results, and miRNA/isomiR annotations:
 
-```plaintext
+```shell
 outdir/
 ├── 00-Data_download                  # Raw FASTQ files downloaded from SRA or provided locally
 ├── 01-Trimming                       # Adapter- and quality-trimmed reads after preprocessing
