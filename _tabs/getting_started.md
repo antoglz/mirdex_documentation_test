@@ -106,6 +106,15 @@ The pipeline can be executed as follows, specifying the input samplesheet, the o
        -profile <docker/singularity/.../>
 ```
 
+{% highlight python %}
+
+def say_hi(to_who):
+    print "Hello,", to_who
+
+say_hi("World")
+
+{% endhighlight %}
+
 For full details on all pipeline features, supported input types, and configurable parameters, it is strongly recommended to consult the usage documentation and the parameter documentation before running the workflow.
 
 > Make sure to select an execution profile compatible with your system (`docker`, `singularity`, or `conda`). The profile determines how dependencies and containers are managed during workflow execution.
