@@ -642,7 +642,7 @@ outdir/
 File description:
 - **Mean–variance plot** — Before performing Principal Component Analysis (PCA), the pipeline automatically computes the relationship between mean abundance and variance across features, both on raw counts and on counts transformed using the **Variance Stabilizing Transformation (VST)**. This transformation, applied exclusively for exploratory purposes, stabilises variance across the dynamic range of counts, preventing highly abundant sequences from dominating the analysis. The VST-transformed data are then used as input for PCA.
 
-[](assets/img/mean_vs_var.png)
+[](assets/img/mean_vs_var.png){: width="700" height="400" }
 
 - **Principal Component Analysis (PCA)** — A dimensionality-reduction technique that projects high-dimensional expression data onto a small number of orthogonal axes (principal components) that explain most of the variance in the dataset. In this context, PCA helps to:
   - Identify whether samples cluster according to their experimental conditions.
@@ -657,11 +657,11 @@ File description:
   Three PCA outputs are generated:
   - `*.ea.html` — An interactive 3D **PCA plot** (Plotly) for dynamic inspection.
   
-  [](assets/img/pca.png)
+  [](assets/img/pca.png){: width="700" height="400" }
 
   - `*variance.ea.png` — A **variance bar plot** showing the percentage of total variance explained by each component.
   
-  [](assets/img/pca_variance.png)
+  [](assets/img/pca_variance.png){: width="700" height="400" }
   
   - `*.ea_summary.tsv` — **Summary** statistics from the EA stage, including proportion of variance explained by the top principal components and the p-value from the Mann–Whitney–Wilcoxon test (Clustering test). Example:
 
@@ -735,7 +735,7 @@ GCTCTCTAGCCTTCTGTCATC	5233.09932720146	-0.999614201204017	0.280632852960409	-3.5
 
 - `*.volcano.png` — **Volcano plot** of log₂ fold-change vs –log10 adjusted p-value, highlighting significant DE sequences.
 
-[](assets/img/volcano.png)
+[](assets/img/volcano.png){: width="700" height="400" }
 
 - `*.dea_summary.tsv` — **Summary** of DEA, including number of significant features, total features tested, method used, and sample IDs.
 
