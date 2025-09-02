@@ -8,6 +8,11 @@ toc: true
 
 **mirDeX-nf** is a Nextflow-based pipeline for differential expression analysis of microRNAs (miRNAs) from small RNA sequencing (sRNA-seq) data. One of the key features of mirDeX-nf is its ability to process and analyze data from multiple comparisons, projects, or species simultaneously. Users only need to include the data for the projects they wish to analyze, and the pipeline will return results for all of them in a single run.
 
+![mirdex-nf metro map](assets/img/mirdex_metromap.svg)
+
+> This metro map was inspired by the workflow representation style used in the [nf-core/rnaseq](https://github.com/nf-core/rnaseq/tree/master) documentation. In case the image above is not loading, please have a look at the [static version](assets/img/metromap/mirdex_metromap_static.svg).
+{: .prompt-info }
+
 1. SRA download (`prefetch` and `fasterq-dump`)
 2. Support for direct input: FASTQ or precomputed count matrices
 3. Read preprocessing (FASTQ):

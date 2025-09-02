@@ -605,3 +605,141 @@ Id	File	Metadata	Genome	Group
 PROJECT1	/path/to/PROJECT1_6.raw.tsv	/path/to/metadata.tsv	/path/to/genome.fa	6
 ...
 ```
+
+## Differential Expression Analysis (DEA)
+
+Differential expression analysis (DEA) is performed with [DESeq2](bioconductor.org/packages/DESeq2), a statistical framework that models count data using negative binomial distributions, estimates size factors and dispersion parameters, and applies shrinkage methods to improve log2 fold-change estimation. For each analysis group defined in the metadata (`Group` column), the pipeline performs two main stages: **Exploratory Analysis** and **Statistical Testing**.
+
+### Exploratory Analysis (EA)
+
+The exploratory analysis phase provides an initial assessment of the dataset before formal statistical testing. Its primary goals are to identify potential outliers, evaluate variance patterns, and determine whether samples cluster according to their biological conditions. This early insight is crucial for detecting technical artefacts, batch effects, or weak separation between experimental groups, allowing users to make informed decisions about data quality and downstream analysis.
+
+##### Output files
+
+For each analysis group, the pipeline generates a set of exploratory visualisations and summary tables that describe variance structure and sample relationships. These include mean–variance plots (raw and VST-transformed data), interactive and static PCA plots, and an optional clustering significance test.
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+├── 03-Validation
+├── 04-Filtering
+├── 05-Quantification
+├── 06-DEA/<SPECIES>/<PROJECT>/<PROJECT>_<GROUP>/
+│    ├── 01-Exploratory_analysis
+│    │    ├── 01-PCA/
+│    │    ├── 02-Mean_vs_variance/
+│    │    └── *.ea_summary.tsv
+│    └── 02-DESeq2
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+- **Mean–variance plot** — Before performing Principal Component Analysis (PCA), the pipeline automatically computes the relationship between mean abundance and variance across features, both on raw counts and on counts transformed using the **Variance Stabilizing Transformation (VST)**. This transformation, applied exclusively for exploratory purposes, stabilises variance across the dynamic range of counts, preventing highly abundant sequences from dominating the analysis. The VST-transformed data are then used as input for PCA.
+
+[](assets/img/mean_vs_var.png)
+
+- **Principal Component Analysis (PCA)** — A dimensionality-reduction technique that projects high-dimensional expression data onto a small number of orthogonal axes (principal components) that explain most of the variance in the dataset. In this context, PCA helps to:
+  - Identify whether samples cluster according to their experimental conditions.
+  - Detect batch effects or outlier samples.
+  
+  *Clustering test (Optional)*: After computing the PCA, the coordinates of each sample on the first three principal components are used to calculate pairwise Euclidean distances between samples. Two sets of distances are then compared:
+    - **Intra-condition distances** – distances between samples belonging to the same experimental condition (e.g. control vs control).
+    - **Inter-condition distances** – distances between samples from different experimental conditions (e.g. control vs treated).
+  
+  A **Mann–Whitney–Wilcoxon (MWW) test** is applied to assess whether intra-condition distances are significantly smaller than inter-condition distances, which would indicate that samples cluster more tightly within their respective conditions than between them. The significance threshold for this test is defined via `--ea_p_value`. Groups failing this test (p-value above threshold) may indicate weak separation between conditions, potentially due to biological similarity, low statistical power, or technical artefacts. **Such information can be used to decide whether a given analysis group should be retained for downstream steps**.
+
+  Three PCA outputs are generated:
+  - `*.ea.html` — An interactive 3D **PCA plot** (Plotly) for dynamic inspection.
+  
+  [](assets/img/pca.png)
+
+  - `*variance.ea.png` — A **variance bar plot** showing the percentage of total variance explained by each component.
+  
+  [](assets/img/pca_variance.png)
+  
+  - `*.ea_summary.tsv` — **Summary** statistics from the EA stage, including proportion of variance explained by the top principal components and the p-value from the Mann–Whitney–Wilcoxon test (Clustering test). Example:
+
+```plaintext
+Group_id	Group	PC1	PC2	PC3	PC4	PC5	PC6	P-value(MWW)
+1	PRJNA277424_1	33.57	23.91	16.85	13	12.67	0	0.327672327672328
+```
+
+### DESeq2
+
+The statistical testing phase uses DESeq2 to identify sequences with significant differences in expression between experimental conditions within each analysis group. Two statistical testing methods are supported:
+- **Wald test (default)** – Evaluates whether the estimated log₂fold-change between two conditions differs significantly from zero (or from a user-defined threshold if `--log2fc_threshold` is set).
+- **Likelihood Ratio Test (LRT)** – Compares a full model to a reduced (nested) model, useful for detecting features with any change across multiple conditions.
+  
+**Significance** is determined using two user-configurable thresholds:
+
+- **Alpha** — Controlled via the `--dea_alpha` (default: `0.05`) option. This parameter not only defines the statistical significance cut-off but is also used by DESeq2 to optimise independent filtering (default in DESeq2: 0.1).
+- **Log₂ fold-change threshold** — Defined by the `--log2fc_threshold` (default: `0`) option. This threshold modifies the null hypothesis of the Wald test from **“log₂ fold-change equals zero” to “absolute log₂ fold-change equals the specified threshold”**, making the test more conservative than post-hoc filtering and typically yielding fewer significant sequences. When this threshold is set, Wald tests are used and any LRT p-values are replaced accordingly.
+  
+Both thresholds are applied directly within DESeq2’s `results()` function, ensuring that statistical significance and effect size filtering are integrated into the statistical testing itself rather than applied as a separate downstream filter.
+
+##### Output files
+
+For each analysis group, DESeq2 produces a complete set of statistical results summarising the expression changes for every tested sequence. These results are saved in two complementary tables: one containing the full output of the statistical testing, and another containing only the sequences that meet the significance criteria defined by the user.
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+├── 03-Validation
+├── 04-Filtering
+├── 05-Quantification
+├── 06-DEA/<SPECIES>/<PROJECT>/<PROJECT>_<GROUP>/
+│    ├── 01-Exploratory_analysis
+│    └── 02-DESeq2
+│         ├── *.dea_raw.tsv
+│         ├── *.dea_sig.tsv
+│         └── *.dea_summary.tsv
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+
+- `*.dea_raw.tsv` — Contains **all sequences tested** in the DEA, regardless of significance. Columns include:
+  - seq: nucleotide sequence identifier.
+  - baseMean: average normalised count across all samples.
+  - log2FoldChange, lfcSE: estimated fold-change and its standard error.
+  - stat, pvalue, padj: test statistic, nominal p-value, and Benjamini–Hochberg adjusted p-value.
+  - Shrunkenlog2FoldChange, ShrunkenlfcSE: fold-change estimates after shrinkage, which can improve interpretability for low-count sequences.
+
+```plaintext
+seq	baseMean	log2FoldChange	lfcSE	stat	pvalue	padj	Shrunkenlog2FoldChange	ShrunkenlfcSE
+TGAAGCTGCCAGCATGATCTA	803236.367418382	-0.583076436382874	0.258471157132313	-2.25586654562154	0.0240789902327954	0.672101711910244	-0.104952659462252	0.176958098516965
+TTGACAGAAGATAGAGAGCAC	863723.458954856	-0.317135465478088	0.258671697273475	-1.22601532684422	0.220192907367621	0.999975255063918	-0.0416546207753741	0.101953208650155
+...
+```
+
+- `*.dea_sig.tsv` — A subset of the raw table containing only sequences classified as **significantly differentially expressed** according to the thresholds set by `--dea_alpha` and `--log2fc_threshold`. This pre-filtered table is the direct input for downstream steps of the pipeline.
+
+```plaintext
+seq	baseMean	log2FoldChange	lfcSE	stat	pvalue	padj	Shrunkenlog2FoldChange	ShrunkenlfcSE
+TGGAGAAGCAGGGCACGTGCG	5270.59462040738	-1.33897817298659	0.312639650974803	-4.28281623527819	1.84542578517607e-05	0.00273032257560886	-1.17324879157415	0.336930141747823
+GCTCTCTAGCCTTCTGTCATC	5233.09932720146	-0.999614201204017	0.280632852960409	-3.56199992502318	0.000368040489264889	0.0303801714842892	-0.810095249983538	0.319443489924416
+...
+```
+
+- `*.volcano.png` — **Volcano plot** of log₂ fold-change vs –log10 adjusted p-value, highlighting significant DE sequences.
+
+[](assets/img/volcano.png)
+
+- `*.dea_summary.tsv` — **Summary** of DEA, including number of significant features, total features tested, method used, and sample IDs.
+
+```plaintext
+Group	Test	Padj<alpha	Total	Coefficient	Contrast	Contrast_coefficient	Samples
+PRJNA277424_1_0	Wald	1133	81225	Level_30._vs_70.	No contrast	No contrast	SRR1848791,SRR1848792,SRR1848793,SRR1848794,SRR1848795,SRR1848796
+```
