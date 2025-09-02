@@ -605,3 +605,41 @@ Id	File	Metadata	Genome	Group
 PROJECT1	/path/to/PROJECT1_6.raw.tsv	/path/to/metadata.tsv	/path/to/genome.fa	6
 ...
 ```
+
+## Differential Expression Analysis (DEA)
+
+Differential expression analysis (DEA) is performed with [DESeq2](bioconductor.org/packages/DESeq2), a statistical framework that models count data using negative binomial distributions, estimates size factors and dispersion parameters, and applies shrinkage methods to improve log2 fold-change estimation. For each analysis group defined in the metadata (`Group` column), the pipeline performs two main stages: **Exploratory Analysis** and **Statistical Testing**.
+
+### Exploratory Analysis (EA)
+
+The exploratory analysis phase provides an initial assessment of the dataset before formal statistical testing. Its primary goals are to identify potential outliers, evaluate variance patterns, and determine whether samples cluster according to their biological conditions. This early insight is crucial for detecting technical artefacts, batch effects, or weak separation between experimental groups, allowing users to make informed decisions about data quality and downstream analysis.
+
+##### Output files
+
+For each analysis group, the pipeline generates a set of exploratory visualisations and summary tables that describe variance structure and sample relationships. These include mean–variance plots (raw and VST-transformed data), interactive and static PCA plots, and an optional clustering significance test.
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+├── 03-Validation
+├── 04-Filtering
+├── 05-Quantification
+├── 06-DEA/<SPECIES>/<PROJECT>/<PROJECT>_<GROUP>/
+│    ├── 01-Exploratory_analysis
+│    │    ├── 01-PCA/
+│    │    ├── 02-Mean_vs_variance/
+│    │    └── *.ea_summary.tsv
+│    └── 02-DESeq2
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+- **Mean–variance plot** — Before performing Principal Component Analysis (PCA), the pipeline automatically computes the relationship between mean abundance and variance across features, both on raw counts and on counts transformed using the **Variance Stabilizing Transformation (VST)**. This transformation, applied exclusively for exploratory purposes, stabilises variance across the dynamic range of counts, preventing highly abundant sequences from dominating the analysis. The VST-transformed data are then used as input for PCA.
+
+[](assets/img/mean_vs_var.png){: width="700" height="400" }
