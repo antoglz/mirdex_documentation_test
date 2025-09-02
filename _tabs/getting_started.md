@@ -10,6 +10,8 @@ toc: true
 
 ![Metromap](/assets/img/mirdex_metromap.svg){: width="700"}
 
+## Pipeline workflow overview 
+
 1. SRA download (`prefetch` and `fasterq-dump`)
 2. Support for direct input: FASTQ or precomputed count matrices
 3. Read preprocessing (FASTQ):
