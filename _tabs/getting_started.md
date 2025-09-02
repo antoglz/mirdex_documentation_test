@@ -100,8 +100,7 @@ For full details on all pipeline features, supported input types, and configurab
 > [!Note]
 > Make sure to select an execution profile compatible with your system (`docker`, `singularity`, or `conda`). The profile determines how dependencies and containers are managed during workflow execution.
 
-**Info!** This paragraph of text has been emphasized with the `{: .notice--info}` class.
-{: .notice--info}
+{% include note.html content="This is my note. All the content I type here is treated as a single paragraph. <br/><br/> Now I'm typing on a  new line." %}
 
 ## Pipeline output
 
