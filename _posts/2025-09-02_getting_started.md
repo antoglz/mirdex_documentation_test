@@ -1,9 +1,6 @@
 ---
-layout: page
 title: Getting started
-icon: fas fa-tags
-order: 1
-toc: true
+date: 2025-09-02 12:00:00 +0200
 ---
 
 **mirDeX-nf** is a Nextflow-based pipeline for differential expression analysis of microRNAs (miRNAs) from small RNA sequencing (sRNA-seq) data. One of the key features of mirDeX-nf is its ability to process and analyze data from multiple comparisons, projects, or species simultaneously. Users only need to include the data for the projects they wish to analyze, and the pipeline will return results for all of them in a single run.
