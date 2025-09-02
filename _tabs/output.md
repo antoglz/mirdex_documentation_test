@@ -6,6 +6,12 @@ order: 2
 toc: true
 ---
 
+<nav>
+  <h2>Pipeline Workflow Overview</h4>
+  * this unordered seed list will be replaced by toc as unordered list
+  {:toc}
+</nav>
+
 ## Pipeline Workflow Overview
 
 The pipeline is built using [Nextflow](https://www.nextflow.io) and processes data using the following steps:
@@ -750,7 +756,7 @@ In this stage, **canonical microRNAs (miRNAs) and potential isomiRs are identifi
 
 ### Reference Alignment (BLASTn)
 
-The annotation step begins by aligning sRNA sequences against reference mature and precursor miRNAs from [miRBase](https://mirbase.org), [sRNAanno](http://plantsrna.org), or [PmiREN](https://www.prmiren.com) using [BLAST (Basic Local Alignment Search Tool)](https://www.ncbi.nlm.nih.gov/books/NBK279690/). BLAST is a widely used sequence comparison algorithm that detects regions of local similarity between sequences and reports detailed alignment metrics, including identity percentage, alignment length, e-value, and bit score. These results enable the precise identification of sequences matching known miRNAs, either partially or in full.
+The annotation step begins by aligning sRNA sequences against reference mature and precursor miRNAs from [miRBase](https://mirbase.org), sRNAanno, or [PmiREN](https://www.prmiren.com) using [BLAST (Basic Local Alignment Search Tool)](https://www.ncbi.nlm.nih.gov/books/NBK279690/). BLAST is a widely used sequence comparison algorithm that detects regions of local similarity between sequences and reports detailed alignment metrics, including identity percentage, alignment length, e-value, and bit score. These results enable the precise identification of sequences matching known miRNAs, either partially or in full.
 
 ##### Output files
 
