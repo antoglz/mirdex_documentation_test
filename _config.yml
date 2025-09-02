@@ -165,7 +165,6 @@ kramdown:
     block:
       line_numbers: true
       start_line: 1
-  toc_levels: 2..3
 
 collections:
   tabs:
