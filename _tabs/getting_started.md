@@ -104,8 +104,8 @@ For full details on all pipeline features, supported input types, and configurab
 
 The pipeline produces a structured set of results, including processed libraries, quality control reports, quantification tables, differential expression results, and miRNA/isomiR annotations:
 
-```plaintext
-    outdir/
+```markdown
+outdir/
 ├── 00-Data_download                  # Raw FASTQ files downloaded from SRA or provided locally
 ├── 01-Trimming                       # Adapter- and quality-trimmed reads after preprocessing
 ├── 02-QC                             # Quality control results for raw and trimmed libraries
