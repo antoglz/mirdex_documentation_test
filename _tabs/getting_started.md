@@ -97,16 +97,8 @@ nextflow run miRdeX-nf/main.nf
 
 For full details on all pipeline features, supported input types, and configurable parameters, it is strongly recommended to consult the usage documentation and the parameter documentation before running the workflow.
 
-> [!Note]
 > Make sure to select an execution profile compatible with your system (`docker`, `singularity`, or `conda`). The profile determines how dependencies and containers are managed during workflow execution.
-
-{{site.data.alerts.note}}
-<p>This is my note.</p>
-<pre>
-def foo(x):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;return x+1
-</pre>
-{{site.data.alerts.end}}
+{: .prompt-info }
 
 ## Pipeline output
 
