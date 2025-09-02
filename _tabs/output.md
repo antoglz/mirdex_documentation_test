@@ -449,3 +449,159 @@ TGACAGTTGAGAGTGAGCAC
 IIIIIIIIIIIIIIIIIIII
 ...
 ```
+
+## Quantification
+
+The quantification step measures the abundance of each unique small RNA sequence detected in the dataset and structures this information for downstream Differential Expression Analysis (DEA). It produces two main outputs: **per-library read counts**, which provide absolute or normalised counts for each sequence in individual libraries, and **analysis group-specific count matrices**, which combine counts from multiple samples belonging to the same analysis group.
+
+### Per-Library Sequence Quantification
+
+For each library, the pipeline quantifies the **abundance of every unique sequence** present in the preprocessed reads. This is achieved by counting the number of times each sequence occurs, producing raw counts that represent the absolute sequencing depth for that sequence within the library. Optionally, counts can be expressed as **Reads Per Million (RPM)**, where counts are scaled by the total number of reads in the library. Raw counts are always generated for downstream DEA, while RPM values are only produced if explicitly requested.
+
+##### Output files
+
+This step produces **one file per library** containing the abundance values for every detected sequence.
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+├── 03-Validation
+├── 04-Filtering
+├── 05-Quantification
+│    ├── 01-Counts_per_sample
+│    │    ├── 01-Raw/<SPECIES>/<PROJECT>/
+│    │    │    └── *.raw.tsv
+│    │    └── 02-RPM/<SPECIES>/<PROJECT>/
+│    │         └── *.rpm.tsv
+│    ├── 02-Counts_matrix
+│    └── 03-Samplesheet
+├── 06-DEA
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+
+- `01-Raw/<SPECIES>/<PROJECT>/*.raw.tsv` — Table reporting the **raw read counts** for all sequences detected in a single library. The first column (`seq`) contains the nucleotide sequence of the small RNA, while the second column (`raw`) provides the corresponding raw counts.
+
+```plaintext
+seq	raw
+TTGACAGAAGATAGAGAGCAC	1555213
+TGACAGAAGAGAGTGAGCAC	1034539
+TGAAGCTGCCAGCATGATCTA	708522
+...
+```
+
+- `02-RPM/<SPECIES>/<PROJECT>/*.rpm.tsv` — Table reporting the **Reads Per Million (RPM)** for all sequences in a single library (*optional*). The first column (`seq`) contains the nucleotide sequence, and the second column (`RPM`) gives the abundance value after normalisation to the total number of mapped reads in that library.
+
+```plaintext
+seq	RPM
+TTGACAGAAGATAGAGAGCAC	177503.45
+TGACAGAAGAGAGTGAGCAC	118076.98
+TGAAGCTGCCAGCATGATCTA	80845.67
+...
+```
+
+### Count Matrix Construction
+
+For each **analysis group** defined in the metadata file (`Group` column), the pipeline merges the counts from all libraries belonging to that group into a single matrix. An analysis group represents a set of samples analysed together in a single DEA, typically containing at least two distinct experimental conditions (e.g. Control vs Treatment, Wild-type vs Mutant).
+
+This grouping strategy enables the pipeline to handle multi-project or multi-condition datasets efficiently, generating separate matrices for each group and ensuring that comparisons are performed only between biologically relevant samples. Raw count matrices are required for DEA, while RPM matrices are optional and intended for visualisation or exploratory analyses outside DEA.
+
+##### Output files
+
+This step produces **one matrix per analysis group**, with either absolute counts or RPM-normalised counts for all samples in that group. Each matrix is a tab-delimited file where rows correspond to unique sequences and columns correspond to individual samples within the analysis group.
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+├── 03-Validation
+├── 04-Filtering
+├── 05-Quantification
+│    ├── 01-Counts_per_sample
+│    ├── 02-Counts_matrix
+│    │    ├── 01-Raw/<SPECIES>/<PROJECT>/
+│    │    │    └── *.raw.tsv
+│    │    └── 02-RPM/<SPECIES>/<PROJECT>/
+│    │         └── *.rpm.tsv
+│    └── 03-Samplesheet
+├── 06-DEA
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+
+- `01-Raw/<SPECIES>/<PROJECT>/*.raw.tsv` — **Raw count matrix** for all samples in the analysis group. The first column (`seq`) contains the nucleotide sequence, and each subsequent column corresponds to a sample in the group, reporting the raw count for that sequence. Sample column names correspond to the `Run` identifiers in the metadata.
+  
+```plaintext
+seq	SRR1848791	SRR1848792	SRR1848793
+TGAAGCTGCCAGCATGATCTA	881696	793949	1008586
+TTGACAGAAGATAGAGAGCAC	834634	780906	1046367
+TGACAGAAGAGAGTGAGCAC	326492	373550	513835
+...
+```
+
+- `02-RPM/<SPECIES>/<PROJECT>/*.rpm.tsv` — **RPM-normalised count matrix** for all samples in the analysis group (*optional*). The first column (`seq`) contains the nucleotide sequence, and each subsequent column corresponds to a sample in the group, reporting the normalised abundance to the total mapped reads of that sample. Sample column names correspond to the `Run` identifiers in the metadata.
+
+```plaintext
+seq	SRR1848791	SRR1848792	SRR1848793
+TGAAGCTGCCAGCATGATCTA	100512.67	94587.21	112345.88
+TTGACAGAAGATAGAGAGCAC	95123.44	92987.53	116223.56
+TGACAGAAGAGAGTGAGCAC	37219.88	44410.56	57012.31
+...
+```
+
+### Samplesheet Generation (*optional*)
+
+In addition to the count matrices, the pipeline can optionally generate a **samplesheet at the quantification stage**. This file follows the same format as the standard pipeline input samplesheet and contains metadata entries for each analysis group, along with the file paths to the corresponding **raw count matrices**.
+This functionality is designed to allow the workflow to be resumed directly from the quantification stage in a future run, without repeating earlier steps such as data download, trimming, filtering, or quality control. It is particularly useful when the first part of the pipeline is executed separately—e.g., to preprocess and quantify sequencing data—while deferring DEA and annotation to a later execution.
+
+##### Output files
+
+One samplesheet file is generated per project, located under 05-Quantification/03-Samplesheet/.
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming
+├── 02-QC
+├── 03-Validation
+├── 04-Filtering
+├── 05-Quantification
+│    ├── 01-Counts_per_sample
+│    ├── 02-Counts_matrix
+│    └── 03-Samplesheet
+│         └── samplesheet_counts.tsv
+├── 06-DEA
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+
+- `samplesheet_counts.tsv` — Tab-delimited file containing one row per count matrix generated during quantification. It is composed of five columns:
+  - `Id` — Project identifier associated with the generated count matrix.
+  - `File` — Path to the count matrix file stored within the output directory.
+  - `Metadata` — Path to the metadata file specified for this project in the samplesheet used during the previous pipeline execution.
+  - `Genome` — Path to the genome file of the species associated with this project, if it was provided in the previous execution’s samplesheet; otherwise, this field remains empty.
+  - `Group` — Group identifier (`Group_id`) corresponding to the analysis group to which the generated count matrix belongs.
+
+```plaintext
+Id	File	Metadata	Genome	Group
+PROJECT1	/path/to/PROJECT1_6.raw.tsv	/path/to/metadata.tsv	/path/to/genome.fa	6
+...
+```
