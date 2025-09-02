@@ -6,10 +6,9 @@ order: 2
 toc: true
 ---
 
-<nav>
-  <h2>Pipeline Workflow Overview</h2>
-  {:toc}
-</nav>
+## Table of contents
+* TOC
+{:toc}
 
 ## Pipeline Workflow Overview
 
