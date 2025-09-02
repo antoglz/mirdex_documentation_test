@@ -68,3 +68,53 @@ outdir/
 ├── 08-Global_matrices
 └── 09-Workflow_report
 ```
+
+File description:
+
+- `*.fastq.gz` — Raw sequencing reads in standard FASTQ format, compressed with gzip. Each file contains all reads for a given library. These files are the direct input for the Quality Control (QC) step.
+
+
+## Trimming
+
+**Trimming** is the process of removing unwanted sequence elements and low-quality regions from raw sequencing reads. This includes the removal of adapter sequences introduced during library preparation, trimming of low-quality bases from read ends, and the exclusion of reads that fall below a defined minimum length. By eliminating these artefacts, trimming enhances both read quality and mapping performance in later stages of the pipeline.
+
+### fastp
+
+The trimming step is implemented using [fastp](https://github.com/OpenGene/fastp), a high-performance, all-in-one FASTQ preprocessor written in C++ with full multithreading support. Fastp automatically detects and removes adapter sequences, trims low-quality bases from the ends of reads, and discards any reads shorter than the user-defined minimum length (`--min_read_length`). This ensures that only high-quality reads are passed to downstream steps.
+
+##### Output files
+
+This step produces one compressed FASTQ file per library containing the adapter- and quality-trimmed reads that will be used in subsequent analyses.
+
+Directory structure:
+
+```plaintext
+outdir/
+├── 00-Data_download
+├── 01-Trimming/<SPECIES>/<PROJECT>/
+│   └── *.fastp.fastq.gz
+├── 02-QC
+├── 03-Validation
+├── 04-Filtering
+├── 05-Quantification
+├── 06-DEA
+├── 07-Annotation
+├── 08-Global_matrices
+└── 09-Workflow_report
+```
+
+File description:
+
+- `*.fastp.fastq.gz` — Compressed FASTQ file containing reads after adapter and quality trimming. Each entry retains the original sequence identifier but with bases at the ends removed according to quality thresholds and adapter detection. Reads shorter than the minimum length are excluded from this file.
+
+```plaintext
+@SEQ_ID_1
+TGACAGAAGAGAGTGAGCAC
++
+IIIIIIIIIIIIIIIIIIII
+@SEQ_ID_2
+TGAAGCTGCCAGCATGATCTA
++
+IIIIIIIIIIIIIIIIIIII
+...
+```
