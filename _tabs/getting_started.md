@@ -100,7 +100,13 @@ For full details on all pipeline features, supported input types, and configurab
 > [!Note]
 > Make sure to select an execution profile compatible with your system (`docker`, `singularity`, or `conda`). The profile determines how dependencies and containers are managed during workflow execution.
 
-{% include note.html content="This is my note. All the content I type here is treated as a single paragraph." %}
+{{site.data.alerts.note}}
+<p>This is my note.</p>
+<pre>
+def foo(x):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return x+1
+</pre>
+{{site.data.alerts.end}}
 
 ## Pipeline output
 
