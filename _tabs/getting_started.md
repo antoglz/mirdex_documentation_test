@@ -68,7 +68,7 @@ In addition, you must have at least one supported execution environment installe
 
 After installing the prerequisites, the pipeline can be obtained directly from GitHub. You can either **download a release archive** or **clone the repository** to get all workflow scripts and configuration files required to run **miRdeX-nf**:
 
-```bash
+```sheññ
 git clone https://github.com/<username>/mirDeX-nf.git
 cd mirDeX-nf
 ```
@@ -79,7 +79,7 @@ To run **miRdeX-nf**, you must provide a properly formatted samplesheet specifyi
 
 **samplesheet.tsv**:
 
-```tsv
+```plaintext
 Id       File                    Metadata                   Genome             Group
 sample1  data/sample1.fastq.gz   metadata/PROJECT1_meta.tsv genomes/ath.fa    
 sample2  data/sample2.fastq.gz   metadata/PROJECT1_meta.tsv genomes/ath.fa    
@@ -99,21 +99,12 @@ In this example, each row represents a single-end FASTQ file associated with a s
 
 The pipeline can be executed as follows, specifying the input samplesheet, the output directory, and the execution environment (Docker, Singularity, or Conda):
 
-```bash
-    nextflow run miRdeX-nf/main.nf
-       --input <SAMPLESHEET>
-       --outdir <OUTDIR>
-       -profile <docker/singularity/.../>
+```shell
+nextflow run miRdeX-nf/main.nf
+   --input <SAMPLESHEET>
+   --outdir <OUTDIR>
+   -profile <docker/singularity/.../>
 ```
-
-{% highlight python %}
-
-def say_hi(to_who):
-    print "Hello,", to_who
-
-say_hi("World")
-
-{% endhighlight %}
 
 For full details on all pipeline features, supported input types, and configurable parameters, it is strongly recommended to consult the usage documentation and the parameter documentation before running the workflow.
 
@@ -124,7 +115,7 @@ For full details on all pipeline features, supported input types, and configurab
 
 The pipeline produces a structured set of results, including processed libraries, quality control reports, quantification tables, differential expression results, and miRNA/isomiR annotations:
 
-<pre><code>
+```plaintext
 outdir/
 ├── 00-Data_download                  # Raw FASTQ files downloaded from SRA or provided locally
 ├── 01-Trimming                       # Adapter- and quality-trimmed reads after preprocessing
@@ -152,6 +143,6 @@ outdir/
 │    └── 03-DEA_annotation            # Fully annotated DEA results (significant sequences)
 ├── 08-Global_matrices                # Global miRNA family expression matrices and mapping files
 └── 09-Workflow_report                # Workflow execution reports, logs, and consolidated summaries
-</code></pre>
+```
 
 For a **comprehensive description of the generated outputs and accompanying reports**, please refer to the output documentation.
