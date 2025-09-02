@@ -10,34 +10,6 @@ toc: true
 
 The pipeline is built using [Nextflow](https://www.nextflow.io) and processes data using the following steps:
 
-<!-- no toc -->
-- [Data Download](#data-download)
-  - [Prefetch and Fasterq-dump](#prefetch-and-fasterq-dump) — Download raw sequencing libraries from public repositories.
-- [Trimming](#trimming)
-  - [fastp](#fastp) - Remove adapter sequences and low-quality bases from reads.
-- [Quality Control (QC)](#quality-control-qc) 
-  - [FastQC](#fastqc) — Assess sequencing quality for both raw and trimmed libraries to evaluate read integrity before and after preprocessing.
-  - [MultiQC](#multiqc) — Aggregate and summarise FastQC reports from all libraries (raw and trimmed) into a single interactive report.
-- [Validation](#validation)
-  - [Libraries validation](#libraries-validation) (*Option 1*)- Assess library and analysis group eligibility based on sequencing depth and minimum replicate requirements.
-  - [Counts matrix validation](#libraries-validation)(*Option 2*) - Assess library and analysis group eligibility based on sequencing depth and minimum replicate requirements.
-- [Filtering](#trimming)
-  - [Database Filtering](#database-filtering-bowtie) — Remove reads aligning to undesired sequences (e.g., rRNA, tRNA, snoRNA, etc.).
-  - [Genome Filtering](#genome-filtering-bowtie) — Remove sequences failing to align to the reference genome.
-- [Quantification](#quantification)
-  - [Per-Library Sequence Quantification](#per-library-sequence-quantification) — Calculate raw counts (and optionally RPM) for each unique sequence within every library.
-  - [Count Matrix Construction](#count-matrix-construction) — Compile raw count matrices (and optionally RPM matrices) across all libraries for downstream DEA.
-  - [Samplesheet Generation ](#samplesheet-generation)(*optional*) — Create a new pipeline input file containing the paths to the generated count matrices, enabling workflow resumption from this stage without repeating earlier steps.
-- [Differential Expression Analysis (DEA)](#differential-expression-analysis-dea)
-  - [Exploratory Analysis (EA)](#exploratory-analysis-ea) — PCA, variance profiling, and clustering/outlier checks.
-  - [DESeq2](#deseq2) — Apply Wald or LRT models to identify differentially expressed small RNAs.
-- [miRNA/IsomiR Annotation](#mirnaisomir-annotation)
-  - [Reference Alignment (BLASTn)](#reference-alignment-blastn) — Align preprocessed sequences to mature and precursor miRNA reference databases.
-  - [IsomiR Filtering and Classification](#isomir-filtering-and-classification) — Filter candidate hits and classify them as canonical miRNAs or specific isomiR subtypes, generating per-sample GFF3 files.
-  - [DEA results annotation](#dea-results-annotation) — Match differentially expressed sequences to their annotations.
-- [Global patterns of DE miRNAs](#global-patterns-of-de-mirnas) — Generates global summary matrices of miRNA family differential expression patterns across all analysis groups.
-- [Workflow report](#workflow-report) — Combine Nextflow execution metadata with pipeline-specific summaries to provide a complete overview of computational and analytical results.
-
 # Output Directory Layout
 
 The pipeline output is organised to mirror the logical progression of the analysis, allowing each result to be traced back to the step that generated it. The directories listed below will be created in the `outdir` directory after the pipeline has finished.
