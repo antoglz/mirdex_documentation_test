@@ -735,7 +735,7 @@ GCTCTCTAGCCTTCTGTCATC	5233.09932720146	-0.999614201204017	0.280632852960409	-3.5
 
 - `*.volcano.png` — **Volcano plot** of log₂ fold-change vs –log10 adjusted p-value, highlighting significant DE sequences.
 
-![volcano](assets/img/volcano.png){: width="700" height="400" }
+![volcano](assets/img/volcano.png)
 
 - `*.dea_summary.tsv` — **Summary** of DEA, including number of significant features, total features tested, method used, and sample IDs.
 
