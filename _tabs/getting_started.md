@@ -104,7 +104,7 @@ For full details on all pipeline features, supported input types, and configurab
 
 The pipeline produces a structured set of results, including processed libraries, quality control reports, quantification tables, differential expression results, and miRNA/isomiR annotations:
 
-```markdown
+<pre><code>
 outdir/
 ├── 00-Data_download                  # Raw FASTQ files downloaded from SRA or provided locally
 ├── 01-Trimming                       # Adapter- and quality-trimmed reads after preprocessing
@@ -132,7 +132,6 @@ outdir/
 │    └── 03-DEA_annotation            # Fully annotated DEA results (significant sequences)
 ├── 08-Global_matrices                # Global miRNA family expression matrices and mapping files
 └── 09-Workflow_report                # Workflow execution reports, logs, and consolidated summaries
-```
-{: .nolineno }
+</code></pre>
 
 For a **comprehensive description of the generated outputs and accompanying reports**, please refer to the output documentation.
