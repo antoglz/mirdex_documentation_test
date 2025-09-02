@@ -608,7 +608,7 @@ PROJECT1	/path/to/PROJECT1_6.raw.tsv	/path/to/metadata.tsv	/path/to/genome.fa	6
 
 ## Differential Expression Analysis (DEA)
 
-Differential expression analysis (DEA) is performed with [DESeq2](bioconductor.org/packages/DESeq2), a statistical framework that models count data using negative binomial distributions, estimates size factors and dispersion parameters, and applies shrinkage methods to improve log2 fold-change estimation. For each analysis group defined in the metadata (`Group` column), the pipeline performs two main stages: **Exploratory Analysis** and **Statistical Testing**.
+Differential expression analysis (DEA) is performed with [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html), a statistical framework that models count data using negative binomial distributions, estimates size factors and dispersion parameters, and applies shrinkage methods to improve log2 fold-change estimation. For each analysis group defined in the metadata (`Group` column), the pipeline performs two main stages: **Exploratory Analysis** and **Statistical Testing**.
 
 ### Exploratory Analysis (EA)
 
@@ -642,4 +642,4 @@ outdir/
 File description:
 - **Mean–variance plot** — Before performing Principal Component Analysis (PCA), the pipeline automatically computes the relationship between mean abundance and variance across features, both on raw counts and on counts transformed using the **Variance Stabilizing Transformation (VST)**. This transformation, applied exclusively for exploratory purposes, stabilises variance across the dynamic range of counts, preventing highly abundant sequences from dominating the analysis. The VST-transformed data are then used as input for PCA.
 
-[](assets/img/mean_vs_var.png){: width="700" height="400" }
+![Mean vs Var]({{ '/assets/img/mean_vs_var.png' | relative_url }})
