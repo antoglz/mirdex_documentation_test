@@ -998,7 +998,7 @@ TGGAGAAGCAGGGCACGTGCG	5270.59462040738	-1.33897817298659	0.312639650974803	-4.28
 
   - `*.boxplot_fam.png` — Boxplot of log2 fold changes grouped by miRNA families.
 
-![boxplot fam](/assets/img/Boxplot_fam.png)
+![boxplot fam](/assets/img/boxplot_fam.png)
 
   - `*.summary.tsv` — Summary table reporting, for each analysis group, whether all members of a given miRNA family display a consistent direction of expression change or exhibit mixed trends. Columns: comparison_id, families_with_consistent_trend, families_with_mixed_trends, list_of_mixed_families.
 ```

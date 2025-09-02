@@ -165,6 +165,7 @@ kramdown:
     block:
       line_numbers: true
       start_line: 1
+  toc_levels: 2..3
 
 collections:
   tabs:
@@ -224,9 +225,8 @@ jekyll-archives:
   permalinks:
     tag: /tags/:name/
     category: /categories/:name/
+# plugins:
+#   - jekyll-compress-images
 
-plugins:
-  - jekyll-compress-images
-
-compress_images:
-  images_path: "assets/img/*.{gif,png,jpg,jpeg,svg}"
+# compress_images:
+#   images_path: "assets/img/*.{gif,png,jpg,jpeg,svg}"
